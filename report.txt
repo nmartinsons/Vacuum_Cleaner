@@ -1,0 +1,30 @@
+How Does Algorithm Works
+
+First, the algorithm exracts all the necessary data from the csv file by using the
+read_file() function. Once the reading is done, the priority queue is implemented and 
+the Greedy Search algorithm and A* algorithm logic is implemented by focusing
+on the dirtiest tiles and shortest path. In addition, priority queue allows to get the highest dirt values
+and prioritize them. When navigating through the grid, the algorithm pops the tiles with the highest dirt values from the
+priority queue. Additionally, it checks if the tile has been visisted and that there is enough battery
+capacity. The algorithm explores all the adjacent tiles and adds them to the priority queue, if they are 
+not already visisted. When priority queue is empty (no more tiles to clean or no battery capacity), 
+the path is reconstructed from starting position and end position by tracking back through the map where 
+all the movements are stored. The path is reveresed to get the actual path of the vacuum cleaner.
+
+
+Results for different test grids
+
+Each tested map/grid type revealed that there are some edge cases that need to be considered. 
+Likewise, the created algorithm works perfectly fine with small grids but starts to experience some
+issues if the grid is too large or complex.
+
+
+Challanges Faced
+
+Mainly I faced with the challanges related to the dirt cleaned_counting, remaining_battery,
+and squares_cleaned. When I tested my code with differet maps there were
+some small errors happening in each of the previously mentioned variables. For instance, for one 
+map the dirt_cleaned count and path taken was correct but the remaing_battery
+had some miscalculation. However, when I tested different map, there were some errors in the dirt_cleaned count. 
+Therefore, I can conclude that my algorithm is not working perfectly and there is room for improvements. 
+

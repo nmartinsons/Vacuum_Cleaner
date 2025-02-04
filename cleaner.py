@@ -42,48 +42,58 @@ def clean(start_row, start_col, battery, move_cost, vacuum_cost, grid):
     # Pushing elements on the priority queue
     # by negating the value on the grid, the max-heap structure is achieved by prioritizing the highest values
     heapq.heappush(priority_queue, (-grid[start_row][start_col], start_row, start_col, battery))
-    
-    map[(start_row, start_col)] = None  
+    # Keeping track of the path we went through to reconstruct later
+    map[(start_row, start_col)] = None
+    # Keeping track of the last position   
     final_position = (start_row, start_col)
 
+    # While loop which executes until there are elements in the priority_queue
     while priority_queue:
+        # Removing and returning the values from the heap queue
         dirt, row, column, rem_battery = heapq.heappop(priority_queue)
-
+        # Checking if the square was already visited to avoid same reprocessing
         if (row, column) in visited:
             continue
         visited.add((row, column))
 
-        # If there's dirt, vacuum it
+        # Presence of dirt is checked and that there is enough battery
         if grid[row][column] > 0 and rem_battery >= vacuum_cost:
-            dirt_cleaned += grid[row][column]
-            rem_battery -= vacuum_cost  # Deduct vacuum cost
-            squares_cleaned += 1
-            grid[row][column] = 0  # Mark as cleaned
+            dirt_cleaned += grid[row][column] # Incrementing dirt value based on the square value
+            rem_battery -= vacuum_cost # deducting vacuuming cost
+            squares_cleaned += 1 # incerements squares cleaned
+            grid[row][column] = 0 # Marks square as cleaned
 
-        # Update battery at each step
+        # Keeping track of the battery
         remaining_battery = rem_battery  
 
-        # Try moving to adjacent squares
+        # For loop which iterates over all four moving directions
         for move_row, move_column in directions:
-            new_row = row + move_row
-            new_column = column + move_column
+            new_row = row + move_row # Computation of new row position 
+            new_column = column + move_column # Computation of new row column
+            # The verification is made for the new position that it is not wall and already not in the visited set
             if check_bounds(grid, new_row, new_column) and (new_row, new_column) not in visited:
+                # Checking if there is enough battery for moving
                 if rem_battery >= move_cost:
-                    new_battery = rem_battery - move_cost  # Deduct movement cost before pushing
+                    new_battery = rem_battery - move_cost  # Reducing battery by the movement cost
+                    # Adding the new position to the priority queue, including the new battery
                     heapq.heappush(priority_queue, (-grid[new_row][new_column], new_row, new_column, new_battery))
-                    map[(new_row, new_column)] = (row, column)  # Track the path
-                    final_position = (new_row, new_column)  # Update last position
+                    map[(new_row, new_column)] = (row, column)  # Tracking the path (from and to)
+                    final_position = (new_row, new_column)  # Updating the last position of the vacuuming
 
-    # **Reconstruct Path from map**
-    path = []
+    # The path is reconstructed to display exactly the same path the vacuum cleaner took
+    path = [] # list for string the path
+    # We iterate from the final position until the starting position and when there are no elements left, it stops
     while final_position is not None:
+        # In each iteration the positions are added to the path list
         path.append(final_position)
+        # By this backward movement along the path is achieved
         final_position = map[final_position]
-    path.reverse()  # Reverse to get correct order
+    path.reverse()  # Reversing the path to get correct order (start to end)
 
     return dirt_cleaned, squares_cleaned, path, remaining_battery
 
 # TEST
+# Assigning the variables to the returned values
 start_row, start_column, battery, move_cost, vacuum_cost, grid = read_file("data.csv")
 dirt_cleaned, squares_cleaned, path, remaining_battery = clean(start_row, start_column, battery, move_cost, vacuum_cost, grid)
 
